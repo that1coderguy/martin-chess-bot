@@ -28,11 +28,38 @@
   <div id="board"></div>
   <button id="botMoveBtn">Bot Plays Move</button>
 
-  <!-- Chess.js (game logic) -->
+  <!-- Load Chess.js -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.13.4/chess.min.js"></script>
-  <!-- Chessboard.js -->
+  <!-- Load Chessboard.js -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/chessboard-js/1.0.0/js/chessboard.min.js"></script>
-  <!-- Your bot script -->
-  <script src="script.js"></script>
+
+  <!-- Bot JS -->
+  <script>
+    // Initialize game logic
+    var game = new Chess();
+
+    // Initialize board
+    var board = Chessboard('board', {
+      draggable: true,
+      position: 'start',
+      onDrop: function(source, target) {
+        var move = game.move({ from: source, to: target, promotion: 'q' });
+        if (move === null) return 'snapback';
+        setTimeout(botMove, 250);
+      }
+    });
+
+    // Simple bot: random legal move
+    function botMove() {
+      var moves = game.moves();
+      if (moves.length === 0) return;
+      var move = moves[Math.floor(Math.random() * moves.length)];
+      game.move(move);
+      board.position(game.fen());
+    }
+
+    // Button to manually trigger bot
+    document.getElementById('botMoveBtn').addEventListener('click', botMove);
+  </script>
 </body>
 </html>
